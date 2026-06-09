@@ -1,0 +1,62 @@
+{% extends 'portal/base.html' %}
+{% block title %}Ofertas de trabajo{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+  <div>
+    <h2 style="margin-bottom:0.25rem;">Ofertas disponibles</h2>
+    <p style="color:var(--muted);font-size:0.875rem;">{{ ofertas.count }} oportunidades encontradas</p>
+  </div>
+  <a href="{% url 'mis_postulaciones' %}" class="btn btn-outline" style="font-size:0.875rem;">Mis postulaciones</a>
+</div>
+
+{% if ofertas %}
+  {% for oferta in ofertas %}
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h3 style="margin-bottom:0.25rem;">{{ oferta.titulo }}</h3>
+          <p style="color:var(--muted);font-size:0.875rem;">
+            {{ oferta.empresa }}
+            {% if oferta.salario_min %}
+              &nbsp;·&nbsp;
+              <span style="color:var(--success);">${{ oferta.salario_min }} — ${{ oferta.salario_max }} CLP</span>
+            {% endif %}
+          </p>
+        </div>
+
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <span class="badge badge-{% if oferta.modalidad == 'remoto' %}green{% elif oferta.modalidad == 'hibrido' %}yellow{% else %}purple{% endif %}">
+            {{ oferta.get_modalidad_display }}
+          </span>
+
+          <a href="{% url 'detalle_oferta' oferta.pk %}" class="btn btn-outline" style="font-size:0.82rem;padding:0.35rem 0.8rem;">
+            Ver
+          </a>
+
+          {% if oferta.pk in ya_postuladas %}
+            <span class="badge badge-green">✓ Postulado</span>
+          {% else %}
+            <a href="{% url 'postular' oferta.pk %}" class="btn" style="background:var(--accent);color:#fff;font-size:0.82rem;padding:0.35rem 0.8rem;">
+              Postular
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if oferta.habilidades_requeridas %}
+        <p style="margin-top:0.75rem;font-size:0.82rem;color:var(--muted);">
+          🛠 {{ oferta.habilidades_requeridas }}
+        </p>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:1.5rem;margin-bottom:0.5rem;">🔍</p>
+    <p style="color:var(--muted);">No hay ofertas disponibles.</p>
+  </div>
+{% endif %}
+
+{% endblock %}

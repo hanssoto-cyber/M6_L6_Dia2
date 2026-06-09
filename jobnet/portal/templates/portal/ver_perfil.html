@@ -1,0 +1,111 @@
+{% extends 'portal/base.html' %}
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+  <div>
+    <h2 style="margin-bottom:0.25rem;">Mi Perfil</h2>
+    <p style="color:var(--muted);font-size:0.875rem;">Tu información profesional tipo CV</p>
+  </div>
+  <a href="{% url 'editar_perfil' %}" class="btn" style="background:var(--accent);color:#fff;font-size:0.875rem;">
+    ✏ Editar perfil
+  </a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+
+  <!-- Columna izquierda -->
+  <div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;">
+        <div style="width:64px;height:64px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;color:#fff;flex-shrink:0;">
+          {{ user.username|slice:":1"|upper }}
+        </div>
+        <div>
+          <h3 style="margin-bottom:0.15rem;">{{ user.get_full_name|default:user.username }}</h3>
+          <p style="color:var(--muted);font-size:0.875rem;">{{ perfil.cargo_actual|default:"Sin cargo registrado" }}</p>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:1rem;">
+        <div style="display:flex;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:120px;">Usuario</span>
+          <span style="font-size:0.9rem;">{{ user.username }}</span>
+        </div>
+        <div style="display:flex;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:120px;">Correo</span>
+          <span style="font-size:0.9rem;">{{ user.email }}</span>
+        </div>
+        <div style="display:flex;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:120px;">Teléfono</span>
+          <span style="font-size:0.9rem;">{{ perfil.telefono|default:"—" }}</span>
+        </div>
+        <div style="display:flex;padding:0.6rem 0;">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:120px;">Ciudad</span>
+          <span style="font-size:0.9rem;">{{ perfil.ciudad|default:"—" }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Resumen profesional</p>
+      <p style="line-height:1.75;font-size:0.9rem;">{{ perfil.resumen|default:"Sin resumen. Edita tu perfil para agregar uno." }}</p>
+    </div>
+
+    <div class="card">
+      <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Habilidades</p>
+      {% if perfil.habilidades %}
+        <p style="font-size:0.9rem;">🛠 {{ perfil.habilidades }}</p>
+      {% else %}
+        <p style="color:var(--muted);font-size:0.875rem;">Sin habilidades registradas.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Columna derecha -->
+  <div>
+    <div class="card">
+      <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Experiencia laboral</p>
+      {% if perfil.cargo_actual %}
+        <div style="display:flex;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:140px;">Cargo</span>
+          <span style="font-size:0.9rem;">{{ perfil.cargo_actual }}</span>
+        </div>
+        <div style="display:flex;padding:0.6rem 0;">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:140px;">Experiencia</span>
+          <span style="font-size:0.9rem;">{{ perfil.annos_experiencia|default:"—" }} años</span>
+        </div>
+      {% else %}
+        <p style="color:var(--muted);font-size:0.875rem;">Sin experiencia registrada.</p>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;">Mis postulaciones ({{ postulaciones.count }})</p>
+        <a href="{% url 'mis_postulaciones' %}" style="font-size:0.82rem;">Ver todas</a>
+      </div>
+
+      {% if postulaciones %}
+        {% for p in postulaciones|slice:":4" %}
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);">
+            <div>
+              <p style="font-size:0.875rem;font-weight:500;">{{ p.oferta.titulo }}</p>
+              <p style="color:var(--muted);font-size:0.78rem;">{{ p.oferta.empresa }}</p>
+            </div>
+            <span class="badge badge-{% if p.estado == 'seleccionada' %}green{% elif p.estado == 'rechazada' %}red{% elif p.estado == 'entrevista' %}yellow{% else %}purple{% endif %}">
+              {{ p.get_estado_display }}
+            </span>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="color:var(--muted);font-size:0.875rem;">
+          Aún no has postulado. <a href="{% url 'lista_ofertas' %}">Ver ofertas</a>
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

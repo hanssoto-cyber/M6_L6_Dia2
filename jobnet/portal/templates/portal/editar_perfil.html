@@ -1,0 +1,81 @@
+{% extends 'portal/base.html' %}
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+  <div>
+    <h2 style="margin-bottom:0.25rem;">Editar Perfil</h2>
+    <p style="color:var(--muted);font-size:0.875rem;">Completa tu información profesional</p>
+  </div>
+  <a href="{% url 'ver_perfil' %}" class="btn btn-outline" style="font-size:0.875rem;">← Ver mi perfil</a>
+</div>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  <!-- Información personal -->
+  <div class="card">
+    <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">Información personal</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="text" name="telefono" placeholder="+56 9 1234 5678"
+               value="{{ form.telefono.value|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Ciudad</label>
+        <input type="text" name="ciudad" placeholder="Santiago"
+               value="{{ form.ciudad.value|default:'' }}">
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen y habilidades -->
+  <div class="card">
+    <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">Resumen y habilidades</p>
+
+    <div class="form-group">
+      <label>Resumen profesional</label>
+      <textarea name="resumen" rows="4"
+                placeholder="Cuéntanos sobre ti y tu experiencia...">{{ form.resumen.value|default:'' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Habilidades (separadas por coma)</label>
+      <textarea name="habilidades" rows="3"
+                placeholder="Python, Django, SQL, Git, React...">{{ form.habilidades.value|default:'' }}</textarea>
+    </div>
+  </div>
+
+  <!-- Experiencia -->
+  <div class="card">
+    <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">Experiencia laboral</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+      <div class="form-group">
+        <label>Cargo actual</label>
+        <input type="text" name="cargo_actual" placeholder="Desarrollador Backend"
+               value="{{ form.cargo_actual.value|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label>Años de experiencia</label>
+        <input type="number" name="annos_experiencia" placeholder="3" min="0"
+               value="{{ form.annos_experiencia.value|default:'' }}">
+      </div>
+    </div>
+  </div>
+
+  {% for error in form.non_field_errors %}
+    <p class="form-error">{{ error }}</p>
+  {% endfor %}
+
+  <div style="display:flex;gap:0.75rem;">
+    <button type="submit" style="background:var(--accent);color:#fff;">💾 Guardar cambios</button>
+    <a href="{% url 'ver_perfil' %}" class="btn btn-outline">Cancelar</a>
+  </div>
+
+</form>
+
+{% endblock %}

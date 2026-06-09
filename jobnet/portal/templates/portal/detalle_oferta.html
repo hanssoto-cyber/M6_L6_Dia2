@@ -1,0 +1,83 @@
+{% extends 'portal/base.html' %}
+{% block title %}{{ oferta.titulo }}{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'lista_ofertas' %}" class="btn btn-outline" style="font-size:0.875rem;margin-bottom:1.5rem;display:inline-block;">
+  ← Volver a ofertas
+</a>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+    <div>
+      <h2 style="margin-bottom:0.25rem;">{{ oferta.titulo }}</h2>
+      <p style="color:var(--muted);">{{ oferta.empresa }}</p>
+    </div>
+    {% if ya_postulo %}
+      <span class="badge badge-green" style="font-size:0.875rem;padding:0.4rem 0.9rem;">✓ Ya postulaste</span>
+    {% else %}
+      <a href="{% url 'postular' oferta.pk %}" class="btn" style="background:var(--accent);color:#fff;">
+        Postular ahora
+      </a>
+    {% endif %}
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.75rem;margin-bottom:1.5rem;">
+    <div style="background:var(--bg3);border-radius:8px;padding:1rem;">
+      <p style="color:var(--muted);font-size:0.75rem;margin-bottom:0.25rem;">MODALIDAD</p>
+      <p style="font-weight:600;">{{ oferta.get_modalidad_display }}</p>
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:1rem;">
+      <p style="color:var(--muted);font-size:0.75rem;margin-bottom:0.25rem;">RENTA</p>
+      <p style="font-weight:600;color:var(--success);">
+        {% if oferta.salario_min %}
+          ${{ oferta.salario_min }} — ${{ oferta.salario_max }}
+        {% else %}
+          A convenir
+        {% endif %}
+      </p>
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:1rem;">
+      <p style="color:var(--muted);font-size:0.75rem;margin-bottom:0.25rem;">PUBLICADA</p>
+      <p style="font-weight:600;">{{ oferta.publicada_en|date:"d/m/Y" }}</p>
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:1rem;">
+      <p style="color:var(--muted);font-size:0.75rem;margin-bottom:0.25rem;">POSTULACIONES</p>
+      <p style="font-weight:600;color:var(--accent2);">{{ oferta.postulaciones.count }}</p>
+    </div>
+  </div>
+
+  {% if oferta.habilidades_requeridas %}
+    <div style="margin-bottom:1.5rem;">
+      <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Habilidades requeridas</p>
+      <p>🛠 {{ oferta.habilidades_requeridas }}</p>
+    </div>
+  {% endif %}
+
+  <div style="margin-bottom:1.5rem;">
+    <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Descripción</p>
+    <p style="line-height:1.8;">{{ oferta.descripcion }}</p>
+  </div>
+
+  <div>
+    <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Requisitos</p>
+    <p style="line-height:1.8;">{{ oferta.requisitos|linebreaks }}</p>
+  </div>
+</div>
+
+{% if not ya_postulo %}
+  <div class="card" style="text-align:center;padding:2rem;">
+    <p style="font-weight:600;margin-bottom:0.5rem;">¿Te interesa este cargo?</p>
+    <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1rem;">Tu perfil será enviado automáticamente.</p>
+    <a href="{% url 'postular' oferta.pk %}" class="btn" style="background:var(--accent);color:#fff;">
+      Postular a {{ oferta.titulo }}
+    </a>
+  </div>
+{% else %}
+  <div class="card" style="text-align:center;padding:1.5rem;">
+    <p style="color:var(--success);font-weight:600;">✓ Ya enviaste tu postulación</p>
+    <a href="{% url 'mis_postulaciones' %}" style="font-size:0.875rem;">Ver mis postulaciones</a>
+  </div>
+{% endif %}
+
+{% endblock %}

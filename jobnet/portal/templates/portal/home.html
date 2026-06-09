@@ -1,0 +1,82 @@
+{% extends 'portal/base.html' %}
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Encuentra tu próximo<br><span>trabajo en tecnología</span></h1>
+  <p>Conecta con las mejores empresas de Chile y LATAM.<br>
+  Ofertas disponibles: <strong style="color:var(--accent2);">{{ total_ofertas }}</strong></p>
+
+  <div class="hero-btns">
+    {% if user.is_authenticated %}
+      <a href="{% url 'lista_ofertas' %}" class="btn" style="background:var(--accent);color:#fff;">Ver ofertas</a>
+      <a href="{% url 'ver_perfil' %}" class="btn btn-outline">Mi perfil</a>
+    {% else %}
+      <a href="{% url 'registro' %}" class="btn" style="background:var(--accent);color:#fff;">Crear cuenta gratis</a>
+      <a href="{% url 'login' %}" class="btn btn-outline">Iniciar sesión</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- OFERTAS RECIENTES -->
+<h2 style="margin-bottom:1rem;">Ofertas recientes</h2>
+
+{% if ofertas_recientes %}
+  {% for oferta in ofertas_recientes %}
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h3 style="margin-bottom:0.25rem;">{{ oferta.titulo }}</h3>
+          <p style="color:var(--muted);font-size:0.9rem;">{{ oferta.empresa }}</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <span class="badge badge-{% if oferta.modalidad == 'remoto' %}green{% elif oferta.modalidad == 'hibrido' %}yellow{% else %}purple{% endif %}">
+            {{ oferta.get_modalidad_display }}
+          </span>
+          <a href="{% url 'detalle_oferta' oferta.pk %}" class="btn" style="background:var(--accent);color:#fff;padding:0.4rem 1rem;font-size:0.85rem;">
+            Ver oferta
+          </a>
+        </div>
+      </div>
+      {% if oferta.salario_min %}
+        <p style="color:var(--success);font-size:0.9rem;margin-top:0.5rem;">
+          ${{ oferta.salario_min }} — ${{ oferta.salario_max }} CLP
+        </p>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="card" style="text-align:center;padding:3rem;">
+    <p style="font-size:1.5rem;margin-bottom:0.5rem;">💼</p>
+    <p style="color:var(--muted);">No hay ofertas disponibles aún.</p>
+  </div>
+{% endif %}
+
+<!-- FEATURES -->
+<h2 style="margin:2rem 0 1rem;">¿Por qué JobNet?</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">
+  <div class="card" style="text-align:center;">
+    <p style="font-size:1.75rem;margin-bottom:0.5rem;">🔐</p>
+    <h3 style="margin-bottom:0.25rem;">Acceso seguro</h3>
+    <p style="color:var(--muted);font-size:0.875rem;">Autenticación robusta con Django.</p>
+  </div>
+  <div class="card" style="text-align:center;">
+    <p style="font-size:1.75rem;margin-bottom:0.5rem;">📋</p>
+    <h3 style="margin-bottom:0.25rem;">Perfil tipo CV</h3>
+    <p style="color:var(--muted);font-size:0.875rem;">Completa tu información profesional.</p>
+  </div>
+  <div class="card" style="text-align:center;">
+    <p style="font-size:1.75rem;margin-bottom:0.5rem;">⚡</p>
+    <h3 style="margin-bottom:0.25rem;">Postulación rápida</h3>
+    <p style="color:var(--muted);font-size:0.875rem;">Postula en segundos a cualquier oferta.</p>
+  </div>
+  <div class="card" style="text-align:center;">
+    <p style="font-size:1.75rem;margin-bottom:0.5rem;">📊</p>
+    <h3 style="margin-bottom:0.25rem;">Seguimiento</h3>
+    <p style="color:var(--muted);font-size:0.875rem;">Sigue el estado de tus postulaciones.</p>
+  </div>
+</div>
+
+{% endblock %}

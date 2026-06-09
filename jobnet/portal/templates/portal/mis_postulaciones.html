@@ -1,0 +1,86 @@
+{% extends 'portal/base.html' %}
+{% block title %}Mis Postulaciones{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+  <div>
+    <h2 style="margin-bottom:0.25rem;">Mis Postulaciones</h2>
+    <p style="color:var(--muted);font-size:0.875rem;">{{ postulaciones.count }} postulaciones enviadas</p>
+  </div>
+  <a href="{% url 'lista_ofertas' %}" class="btn" style="background:var(--accent);color:#fff;font-size:0.875rem;">
+    Ver más ofertas
+  </a>
+</div>
+
+{% if postulaciones %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Oferta</th>
+          <th>Empresa</th>
+          <th>Modalidad</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Carta</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in postulaciones %}
+          <tr>
+            <td><strong>{{ p.oferta.titulo }}</strong></td>
+            <td style="color:var(--muted);">{{ p.oferta.empresa }}</td>
+            <td>
+              <span class="badge badge-{% if p.oferta.modalidad == 'remoto' %}green{% elif p.oferta.modalidad == 'hibrido' %}yellow{% else %}purple{% endif %}">
+                {{ p.oferta.get_modalidad_display }}
+              </span>
+            </td>
+            <td>
+              <span class="badge badge-{% if p.estado == 'seleccionada' %}green{% elif p.estado == 'rechazada' %}red{% elif p.estado == 'entrevista' %}yellow{% else %}purple{% endif %}">
+                {{ p.get_estado_display }}
+              </span>
+            </td>
+            <td style="color:var(--muted);font-size:0.82rem;">{{ p.fecha_postulacion|date:"d/m/Y" }}</td>
+            <td>
+              {% if p.carta_presentacion %}
+                <span class="badge badge-green">Sí</span>
+              {% else %}
+                <span class="badge badge-red">No</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'detalle_oferta' p.oferta.pk %}" class="btn btn-outline" style="font-size:0.78rem;padding:0.3rem 0.7rem;">
+                Ver oferta
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:1rem;padding:1rem 1.5rem;">
+    <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Leyenda de estados</p>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <span class="badge badge-purple">Enviada</span>
+      <span class="badge badge-purple">En revisión</span>
+      <span class="badge badge-yellow">Entrevista</span>
+      <span class="badge badge-green">Seleccionada</span>
+      <span class="badge badge-red">Rechazada</span>
+    </div>
+  </div>
+
+{% else %}
+  <div class="card" style="text-align:center;padding:4rem 2rem;">
+    <p style="font-size:2.5rem;margin-bottom:1rem;">📂</p>
+    <p style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;">Aún no has postulado</p>
+    <p style="color:var(--muted);margin-bottom:1.5rem;">Explora las ofertas disponibles y da el primer paso.</p>
+    <a href="{% url 'lista_ofertas' %}" class="btn" style="background:var(--accent);color:#fff;">
+      Ver ofertas disponibles
+    </a>
+  </div>
+{% endif %}
+
+{% endblock %}

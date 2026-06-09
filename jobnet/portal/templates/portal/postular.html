@@ -1,0 +1,100 @@
+{% extends 'portal/base.html' %}
+{% block title %}Postular — {{ oferta.titulo }}{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'detalle_oferta' oferta.pk %}" class="btn btn-outline" style="font-size:0.875rem;margin-bottom:1.5rem;display:inline-block;">
+  ← Volver a la oferta
+</a>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start;">
+
+  <!-- Formulario -->
+  <div>
+    <div class="card">
+      <h2 style="margin-bottom:0.25rem;">Postular</h2>
+      <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1.5rem;">
+        {{ oferta.titulo }} — {{ oferta.empresa }}
+      </p>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label>Carta de presentación (opcional)</label>
+          <textarea name="carta_presentacion" rows="8"
+                    placeholder="Preséntate brevemente y explica por qué eres el candidato ideal...">{{ form.carta_presentacion.value|default:'' }}</textarea>
+          {% for error in form.carta_presentacion.errors %}
+            <p class="form-error">{{ error }}</p>
+          {% endfor %}
+        </div>
+
+        <p style="color:var(--muted);font-size:0.82rem;margin-bottom:1rem;">
+          ℹ Tu perfil completo se enviará automáticamente.
+        </p>
+
+        <button type="submit" style="background:var(--accent);color:#fff;width:100%;">
+          📤 Enviar postulación
+        </button>
+        <a href="{% url 'detalle_oferta' oferta.pk %}" class="btn btn-outline" style="width:100%;margin-top:0.5rem;">
+          Cancelar
+        </a>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resumen perfil -->
+  <div>
+    <div class="card">
+      <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">Tu perfil que se enviará</p>
+
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+        <div style="width:48px;height:48px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:700;color:#fff;flex-shrink:0;">
+          {{ user.username|slice:":1"|upper }}
+        </div>
+        <div>
+          <p style="font-weight:600;">{{ user.get_full_name|default:user.username }}</p>
+          <p style="color:var(--muted);font-size:0.82rem;">{{ user.perfil.cargo_actual|default:"Sin cargo" }}</p>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:1rem;">
+        <div style="display:flex;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:130px;">Experiencia</span>
+          <span style="font-size:0.875rem;">{{ user.perfil.annos_experiencia|default:"—" }} años</span>
+        </div>
+        <div style="display:flex;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:130px;">Ciudad</span>
+          <span style="font-size:0.875rem;">{{ user.perfil.ciudad|default:"—" }}</span>
+        </div>
+        <div style="display:flex;padding:0.5rem 0;">
+          <span style="color:var(--muted);font-size:0.82rem;min-width:130px;">Habilidades</span>
+          <span style="font-size:0.875rem;">{{ user.perfil.habilidades|default:"—" }}</span>
+        </div>
+      </div>
+
+      <a href="{% url 'editar_perfil' %}" class="btn btn-outline" style="width:100%;margin-top:1rem;font-size:0.82rem;">
+        ✏ Actualizar perfil
+      </a>
+    </div>
+
+    <div class="card">
+      <p style="color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Sobre la oferta</p>
+      <div style="display:flex;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+        <span style="color:var(--muted);font-size:0.82rem;min-width:130px;">Empresa</span>
+        <span style="font-size:0.875rem;">{{ oferta.empresa }}</span>
+      </div>
+      <div style="display:flex;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+        <span style="color:var(--muted);font-size:0.82rem;min-width:130px;">Modalidad</span>
+        <span style="font-size:0.875rem;">{{ oferta.get_modalidad_display }}</span>
+      </div>
+      <div style="display:flex;padding:0.5rem 0;">
+        <span style="color:var(--muted);font-size:0.82rem;min-width:130px;">Postulaciones</span>
+        <span style="font-size:0.875rem;color:var(--accent2);">{{ oferta.postulaciones.count }}</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

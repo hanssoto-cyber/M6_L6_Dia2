@@ -1,0 +1,46 @@
+{% extends 'portal/base.html' %}
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+
+<div style="max-width:420px;margin:4rem auto;">
+  <div class="card">
+    <div style="text-align:center;margin-bottom:2rem;">
+      <p style="font-size:2rem;">🔐</p>
+      <h2 style="margin-bottom:0.25rem;">Job<span style="color:var(--accent2);">Net</span></h2>
+      <p style="color:var(--muted);font-size:0.875rem;">Ingresa tus credenciales para continuar</p>
+    </div>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" name="username" value="{{ form.username.value|default:'' }}" placeholder="Tu nombre de usuario">
+        {% for error in form.username.errors %}
+          <p class="form-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" name="password" placeholder="••••••••">
+        {% for error in form.password.errors %}
+          <p class="form-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      {% for error in form.non_field_errors %}
+        <p class="form-error">{{ error }}</p>
+      {% endfor %}
+
+      <button type="submit" style="width:100%;margin-top:0.5rem;">Iniciar sesión</button>
+    </form>
+
+    <p style="text-align:center;margin-top:1.25rem;color:var(--muted);font-size:0.875rem;">
+      ¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a>
+    </p>
+  </div>
+</div>
+
+{% endblock %}
